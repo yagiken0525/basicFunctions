@@ -450,6 +450,7 @@ void yagi::mycalcWarpedPoint(vector<cv::Point2f> next, vector<cv::Point2f> *warp
 void yagi::myMkdir(std::string dir) {
     //ディレクトリ作成
     const char *cstr = dir.c_str();
+    cout << dir << endl;
     if (mkdir(cstr, 0777) == 0) {
         printf("directory correctly generated\n");
     } else {
@@ -467,6 +468,7 @@ void yagi::videoToImage(std::string videoPath, std::string imageDir,
     //動画読み込み
     cv::VideoCapture capture(videoPath);
     int frame_counter = 0;
+    int max_frame=capture.get(CV_CAP_PROP_FRAME_COUNT);
 
     //画像保存先の確保
     string image_folder = imageDir;
@@ -494,9 +496,8 @@ void yagi::videoToImage(std::string videoPath, std::string imageDir,
             outputfile << image_file_name << endl;
         }
     } else {
-
         //テキストファイル出力しない場合
-        while (capture.grab()) {
+        while (frame_counter < max_frame - 1) {
         //フレーム分だけキャプチャ
             cv::Mat frame;
             capture >> frame;

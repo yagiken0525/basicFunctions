@@ -211,7 +211,6 @@ void myOpenPose::getPosesInVideo(cv::VideoCapture& cap, std::vector<std::vector<
     //OpenPose
     op::Wrapper opWrapper{op::ThreadManagerMode::Asynchronous};
     opWrapper.start();
-    vector<myOpenPose> personList;
 
     cv::Mat frame;
     cv::Mat firstImage;
@@ -224,10 +223,10 @@ void myOpenPose::getPosesInVideo(cv::VideoCapture& cap, std::vector<std::vector<
             op::Array<float> poses = datumProcessed->at(0).poseKeypoints;
             vector<OpenPosePerson> personList;
 
+            this->getPosesInImage(poses, personList);
             cv::resize(frame, frame, cv::Size(), 640.0 / frame.cols, 320.0 / frame.rows);
             cv::imshow("User worker GUI", frame);
             int k = cv::waitKey(1);
-
 
             if (k == 27) {
                 cap.release();
@@ -236,6 +235,8 @@ void myOpenPose::getPosesInVideo(cv::VideoCapture& cap, std::vector<std::vector<
             }
             openPoseList.push_back(personList);
             frameID++;
+        }else{
+            break;
         }
     }
     cap.release();
