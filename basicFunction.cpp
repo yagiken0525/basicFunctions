@@ -3,6 +3,7 @@
 //
 
 #include "basicFunction.h"
+#include <sys/stat.h>
 #include <sstream>
 
 using namespace std;
@@ -443,5 +444,66 @@ void yagi::mycalcWarpedPoint(vector<cv::Point2f> next, vector<cv::Point2f> *warp
 
         warped->push_back(warp_pt);
 
+    }
+}
+
+void yagi::myMkdir(std::string dir) {
+    //ディレクトリ作成
+    const char *cstr = dir.c_str();
+    if (mkdir(cstr, 0777) == 0) {
+        printf("directory correctly generated\n");
+    } else {
+        printf("directory already exists\n");
+    }
+}
+
+
+void yagi::videoToImage(std::string videoPath, std::string imageDir,
+                        bool imListTxt, std::string imFormat) {
+    //入力ファイル名確認
+    string video_path = videoPath;
+    cout << "input video name: " << video_path << endl;
+
+    //動画読み込み
+    cv::VideoCapture capture(videoPath);
+    int frame_counter = 0;
+
+    //画像保存先の確保
+    string image_folder = imageDir;
+    myMkdir(image_folder);
+
+    //動画からフレームへの分割
+    //テキストファイルに出力する場合
+    if (imListTxt) {
+
+        //テキストファイルオープン
+        string imagelist_path = imageDir + "/imList.txt";
+        ofstream outputfile(imagelist_path);
+        cout << "saving imagelist.txt: " << imagelist_path << endl;
+
+        //フレーム分だけキャプチャ
+        while (capture.grab()) {
+            cv::Mat frame;
+            capture >> frame;
+            string number = digitString(frame_counter++, 4);
+
+            //画像保存
+            string image_file_name;
+            image_file_name = image_folder + "/image" + number + imFormat;
+            cv::imwrite(image_file_name, frame);
+            outputfile << image_file_name << endl;
+        }
+    } else {
+
+        //テキストファイル出力しない場合
+        while (capture.grab()) {
+        //フレーム分だけキャプチャ
+            cv::Mat frame;
+            capture >> frame;
+
+            //画像保存
+            string number = digitString(frame_counter++, 4);
+            cv::imwrite(image_folder + "/image" + number + "." + imFormat, frame);
+        }
     }
 }

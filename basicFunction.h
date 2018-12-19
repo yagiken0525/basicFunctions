@@ -12,6 +12,10 @@
 
 namespace yagi {
 
+    void videoToImage(std::string videoPath, std::string imageDir, bool imListTxt, std::string imFormat);
+
+    void myMkdir(std::string dir);
+
     std::string digitString(int num, int digit);
 
     std::vector<std::string> split(const std::string &s, char delim);

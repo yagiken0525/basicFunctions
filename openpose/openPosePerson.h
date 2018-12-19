@@ -14,7 +14,7 @@ public:
     OpenPosePerson() {};
     ~OpenPosePerson() {};
 
-    cv::Mat calcOpenPoseMask(std::vector<cv::Point2f>& body_parts_coord, const int radius, cv::Size imSize);
+    cv::Mat calcOpenPoseMask(const int radius, cv::Size imSize);
     void setBodyCoord(std::vector<std::string> coord);
     std::vector<cv::Point2f> getBodyCoord();
     void clearBodyCoord();

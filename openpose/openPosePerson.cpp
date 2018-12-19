@@ -3,9 +3,10 @@
 
 using namespace std;
 
-cv::Mat OpenPosePerson::calcOpenPoseMask(vector<cv::Point2f>& pts, const int OP_MASK_RADIUS, cv::Size imSize){
+cv::Mat OpenPosePerson::calcOpenPoseMask(const int OP_MASK_RADIUS, cv::Size imSize){
     cv::Mat mask = cv::Mat::zeros(imSize, CV_8U);
     cv::Scalar WHITE(255,255,255);
+    vector<cv::Point2f> pts = this->_body_parts_coord;
     for(cv::Point2f pt: pts){
         if(pt != cv::Point2f(0,0)) {
             cv::circle(mask, pt, OP_MASK_RADIUS, WHITE, -1, CV_AA);
