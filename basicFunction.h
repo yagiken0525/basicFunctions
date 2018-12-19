@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include "openpose/myOpenPose.h"
 
 namespace yagi {
 
@@ -44,6 +45,7 @@ namespace yagi {
 
     cv::Point2f warpPoint(cv::Point2f srcPt, cv::Mat H);
 
+    float sumOfDistOfPoints(std::vector<cv::Point2f> ptList1, std::vector<cv::Point2f> ptList2);
     template<typename Point>
     float calcDistance(Point p1, Point p2);
 

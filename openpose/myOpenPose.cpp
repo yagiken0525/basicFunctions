@@ -128,34 +128,9 @@ void myOpenPose::outputTextFromVideo(const std::string video_path, const std::st
     op::log("Stopping OpenPose...", op::Priority::High);
 }
 
-void OpenPosePerson::setBodyCoord(vector<string> coord) {
-    cv::Point2f coord_f(stof(coord[0]), stof(coord[1]));
-    _body_parts_coord.push_back(coord_f);
-}
 
-vector<cv::Point2f> OpenPosePerson::getBodyCoord() {
-    return this->_body_parts_coord;
-}
-
-
-void OpenPosePerson::clearBodyCoord() {
-    _body_parts_coord.clear();
-}
-
-cv::Mat OpenPosePerson::getMaskImage(const int radius, cv::Size imSize){
-    cv::Mat mask = cv::Mat::zeros(imSize, CV_8U);
-    cv::Scalar WHITE(255,255,255);
-    for(cv::Point2f pt: this->_body_parts_coord){
-        if(pt != cv::Point2f(0,0)) {
-            cv::circle(mask, pt, radius, WHITE, -1, CV_AA);
-        }
-    }
-    cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, 2);
-    return mask;
-}
-
-void myOpenPose::DetectTargetPerson(vector<OpenPosePerson>& personList, cv::Mat image, bool USING_PROB, string INIT_POINT_FILE) {
-    int peopleNum = personList.size();
+void myOpenPose::DetectTargetPerson(vector<OpenPosePerson>& personList, OpenPosePerson& target, cv::Mat image, bool USING_PROB, string trackingFileName) {
+    int peopleNum = int(personList.size());
 
     //トラッキング対象人物を決定
     int targetID = 0;
@@ -174,7 +149,7 @@ void myOpenPose::DetectTargetPerson(vector<OpenPosePerson>& personList, cv::Mat 
     }else{
         float minDist = 10000;
         vector<cv::Point2f> clickPoints;
-        string trackingFileName = INIT_POINT_FILE;
+        string trackingFileName;
         ifstream pointFile(trackingFileName);
         if(pointFile.fail()) {
             yagi::clickPoints(image, clickPoints, trackingFileName);
@@ -216,8 +191,8 @@ void myOpenPose::getPosesInImage(op::Array<float>& poses, vector<OpenPosePerson>
     }
 }
 
-void myOpenPose::tracking(OpenPosePerson& prevPerson, OpenPosePerson& newTarget, vector<OpenPosePerson>& personList){
-    int peopleNum = personList.size();
+void myOpenPose::tracking(OpenPosePerson& prevPerson, OpenPosePerson& target, vector<OpenPosePerson>& personList){
+    int peopleNum = int(personList.size());
     int trackingID = 0;
     float minDist = 10000;
     for(int personID = 0; personID < peopleNum; personID++) {
@@ -228,7 +203,7 @@ void myOpenPose::tracking(OpenPosePerson& prevPerson, OpenPosePerson& newTarget,
         }
     }
     personList[trackingID].humanID = 1;
-    newTarget = personList[trackingID];
+    target = personList[trackingID];
 }
 
 void myOpenPose::getPosesInVideo(cv::VideoCapture& cap, std::vector<std::vector<OpenPosePerson>>& openPoseList) {
@@ -292,7 +267,7 @@ void myOpenPose::trackingTargetInVideo(cv::VideoCapture& cap, std::vector<std::v
 
             if (!poses.getSize().empty()) { //誰か検出されたら
                 if (frameID == 0) {
-                    DetectTargetPerson(personList);
+                    DetectTargetPerson(personList, newTarget ,frame);
                 } else {
                     getPosesInImage(poses, personList);
                     tracking(prevTarget, newTarget, personList);
@@ -303,6 +278,10 @@ void myOpenPose::trackingTargetInVideo(cv::VideoCapture& cap, std::vector<std::v
                 cv::destroyAllWindows();
                 break;
             }
+
+            prevTarget = newTarget;
+            personList.clear();
+
             openPoseList.push_back(personList);
             frameID++;
         }

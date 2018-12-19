@@ -26,6 +26,15 @@ void runnerCallBackFunc(int eventType, int x, int y, int flags, void *userdata) 
     }
 }
 
+float yagi::sumOfDistOfPoints(vector<cv::Point2f> ptList1, vector<cv::Point2f> ptList2){
+//    CV_ASSERT(ptList1.size() == ptList2.size());
+    float sumDist = 0;
+    for(int i = 0; i < ptList1.size(); i++){
+        sumDist += yagi::calc2PointDistance(ptList1[i], ptList2[i]);
+    }
+    sumDist /= ptList1.size();
+    return sumDist;
+}
 
 void yagi::clickPoints(cv::Mat image, vector<cv::Point2f> & clickedPoints, const string file_name) {
     vector<cv::Scalar> colors;
