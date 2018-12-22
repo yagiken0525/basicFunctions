@@ -133,6 +133,17 @@ void yagi::loadImage(string imagePath, vector<cv::Mat>* imageList){
     }
 }
 
+void yagi::loadImageFromVideo(string videoPath, vector<cv::Mat>& imageList){
+    cv::VideoCapture cap(videoPath);
+    int IMNUM = int(cap.get(CV_CAP_PROP_FRAME_COUNT));
+    cv::Mat image;
+    for(int i = 0; i < IMNUM; i++)
+    {
+        cap >> image;
+        imageList.push_back(image);
+    }
+}
+
 template<typename type>
 void yagi::vectorSum(std::vector<type> vec){
     type sum = 0.0;

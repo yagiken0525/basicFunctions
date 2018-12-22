@@ -55,6 +55,8 @@ namespace yagi {
 
     void loadImage(std::string imagePath, std::vector<cv::Mat>* imageList);
 
+    void loadImageFromVideo(std::string videoPath, std::vector<cv::Mat>& imageVec);
+
     void generatePointClouds(std::vector<cv::Point3f>& objectCorners, int H, int W, float SCALE, int Wstart = 0, int Hstart = 0);
 
 
