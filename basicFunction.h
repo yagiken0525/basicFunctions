@@ -73,7 +73,12 @@ namespace yagi {
     template<typename type>
     void vectorSum(std::vector<type> vec);
 
+    bool checkFileExistence(const std::string& str);
+
+
     void clickPoints(cv::Mat image, std::vector<cv::Point2f> & clickedPoints, const std::string filePath="" );
+
+    cv::Point2f getCrossingPoint(float a1, float b1, float a2, float b2);
 
     void push4PointsToVector(std::vector<cv::Point2f> &points, cv::Point2f Hb_pt1, cv::Point2f Hb_pt2, cv::Point2f Hb_pt3, cv::Point2f Hb_pt4);
 

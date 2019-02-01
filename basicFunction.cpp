@@ -266,6 +266,18 @@ void yagi::drawLine(cv::Mat edgeMask, cv::Point2f pt1, cv::Point2f pt2, int thic
     cv::line(edgeMask, pt1, pt2, color, thickness);
 }
 
+bool yagi::checkFileExistence(const std::string& str)
+{
+    std::ifstream ifs(str);
+    return ifs.is_open();
+}
+
+cv::Point2f yagi::getCrossingPoint(float a1, float b1, float a2, float b2){
+    float x1 = (b2 - b1)/(a1 - a2);
+    float y1 = a1 * x1 + b1;
+    return cv::Point2f(x1, y1);
+}
+
 
 void yagi::push4PointsToVector(vector<cv::Point2f> &points, cv::Point2f Hb_pt1, cv::Point2f Hb_pt2, cv::Point2f Hb_pt3, cv::Point2f Hb_pt4){
     points.push_back(Hb_pt1);
